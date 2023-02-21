@@ -7,7 +7,7 @@ export default class ActionsStatusDisplay {
 
   static actionStatusSrcDom: HTMLDivElement | null = null;
 
-  static initialize() {
+  static async initialize() {
     this.actionStatusDom.classList.add(
       'discussion-sidebar-item',
       'sidebar-actions-status',
@@ -19,8 +19,18 @@ export default class ActionsStatusDisplay {
     this.labelDom.innerHTML = 'Actions status';
     this.statusDom.innerHTML = '';
 
-    const reviewersDom = document.querySelector('.sidebar-assignee');
-    if (!reviewersDom || !reviewersDom.parentElement) {
+    const reviewersDom = await new Promise<HTMLDivElement>((r) => {
+      const intervalId = setInterval(() => {
+        const dom = document.querySelector<HTMLDivElement>('.sidebar-assignee');
+        if (!dom) {
+          return;
+        }
+        r(dom);
+        clearInterval(intervalId);
+      }, 200);
+    });
+
+    if (!reviewersDom.parentElement) {
       throw new Error('not found reviewers dom');
     }
 
@@ -38,5 +48,3 @@ export default class ActionsStatusDisplay {
     this.statusDom.innerHTML = `<span style="color:${color}">${status}</span>`;
   }
 }
-
-ActionsStatusDisplay.initialize();

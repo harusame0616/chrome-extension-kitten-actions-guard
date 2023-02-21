@@ -10,24 +10,29 @@ export const events = [
 ] as const;
 
 export type EventType = typeof events[number];
-export default (event: EventType) => {
-  switch (event) {
-    case 'processing':
-      ActionsStatusDisplay.changeStatus(event);
-      ReviwersDisplay.disable();
-      break;
-    case 'passed':
-      ActionsStatusDisplay.changeStatus(event);
-      ReviwersDisplay.enable();
-      break;
-    case 'fail':
-      ActionsStatusDisplay.changeStatus(event);
-      ReviwersDisplay.disable();
-      break;
-    case 'init':
-      ReviwersDisplay.disable();
-      break;
-    default:
-      throw new Error('unknown event');
+export default async (event: EventType) => {
+  try {
+    switch (event) {
+      case 'processing':
+        ActionsStatusDisplay.changeStatus(event);
+        ReviwersDisplay.disable();
+        break;
+      case 'passed':
+        ActionsStatusDisplay.changeStatus(event);
+        ReviwersDisplay.enable();
+        break;
+      case 'fail':
+        ActionsStatusDisplay.changeStatus(event);
+        ReviwersDisplay.disable();
+        break;
+      case 'init':
+        await ActionsStatusDisplay.initialize();
+        await ReviwersDisplay.initialize();
+        break;
+      default:
+        throw new Error('unknown event');
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
