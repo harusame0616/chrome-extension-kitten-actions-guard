@@ -13,7 +13,7 @@ export default class ReviwersDisplay {
       }, 200);
     });
 
-    this.disable();
+    this.enable();
   }
 
   static disable(): void {
