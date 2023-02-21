@@ -9,10 +9,10 @@ const manifest = defineManifest({
   description: '',
   version: '1.0',
   icons: {
-    // "16": "",
-    // "32": "",
-    // "48": "",
-    // "128": "",
+    '16': 'assets/icons/16x16.png',
+    '32': 'assets/icons/32x32.png',
+    '48': 'assets/icons/48x48.png',
+    '128': 'assets/icons/64x64.png',
   },
   content_scripts: [
     {
