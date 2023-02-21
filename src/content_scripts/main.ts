@@ -70,19 +70,32 @@ const main = async () => {
   await emitEventByActionStatusMessage(actionsStatusMessageDom.innerText);
 };
 
-const githubLocationObserve = () => {
+const observeGithub = () => {
   const lunchMainWhenConversation = () => {
     if (/^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href)) {
       main();
     }
   };
-  const observer = new MutationObserver(lunchMainWhenConversation);
-  observer.observe(document.body.children[0], {
+
+  let lastInitUrl = '';
+  const observer = new MutationObserver(() => {
+    // 要素ごとの変更でコールバックされるため、
+    // 同一URLでは１回だけ実行されるように
+    if (lastInitUrl === window.location.href) {
+      return;
+    }
+    lastInitUrl = window.location.href;
+
+    lunchMainWhenConversation();
+  });
+  observer.observe(document.body, {
     attributes: false,
     childList: true,
-    subtree: false,
+    subtree: true,
   });
   lunchMainWhenConversation();
 };
 
-githubLocationObserve();
+// SPA のため URL が変更されても再読み込みされない事がある。
+// なので DOM の変更を監視して処理を実行する。
+observeGithub();
