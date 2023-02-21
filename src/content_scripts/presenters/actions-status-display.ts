@@ -17,7 +17,7 @@ export default class ActionsStatusDisplay {
     this.actionStatusDom.appendChild(this.labelDom);
     this.actionStatusDom.appendChild(this.statusDom);
     this.labelDom.innerHTML = 'Actions status';
-    this.statusDom.innerHTML = '';
+    this.statusDom.innerHTML = '-';
 
     const reviewersDom = await new Promise<HTMLDivElement>((r) => {
       const intervalId = setInterval(() => {
