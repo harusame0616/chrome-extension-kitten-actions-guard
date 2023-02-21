@@ -1,5 +1,5 @@
 import eventHandler, { EventType } from './event-handler';
 
-export default (event: EventType) => {
-  eventHandler(event);
+export default async (event: EventType) => {
+  await eventHandler(event);
 };

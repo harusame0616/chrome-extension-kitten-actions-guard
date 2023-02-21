@@ -47,17 +47,19 @@ const getActionsStatusMessageDom = () =>
     }, 1000);
   });
 
-const emitEventByActionStatusMessage = (actionsStatusMessage: string) => {
-  eventEmits(actionsStatusMessageToStatus(actionsStatusMessage));
+const emitEventByActionStatusMessage = async (actionsStatusMessage: string) => {
+  await eventEmits(actionsStatusMessageToStatus(actionsStatusMessage));
 };
 
 const main = async () => {
+  await eventEmits('init');
+
   const actionsStatusMessageDom = await getActionsStatusMessageDom();
 
   // Actions の ステータスメッセージを監視ししてイベントを発火させる
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(async (mutations) => {
     const newActionsStatusMessage = mutations[0].target.textContent ?? '';
-    emitEventByActionStatusMessage(newActionsStatusMessage);
+    await emitEventByActionStatusMessage(newActionsStatusMessage);
   });
   observer.observe(actionsStatusMessageDom, {
     subtree: true,
@@ -65,7 +67,22 @@ const main = async () => {
   });
 
   // 初回の状態を反映させる
-  emitEventByActionStatusMessage(actionsStatusMessageDom.innerText);
+  await emitEventByActionStatusMessage(actionsStatusMessageDom.innerText);
 };
 
-main();
+const githubLocationObserve = () => {
+  const lunchMainWhenConversation = () => {
+    if (/^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href)) {
+      main();
+    }
+  };
+  const observer = new MutationObserver(lunchMainWhenConversation);
+  observer.observe(document.body.children[0], {
+    attributes: false,
+    childList: true,
+    subtree: false,
+  });
+  lunchMainWhenConversation();
+};
+
+githubLocationObserve();
