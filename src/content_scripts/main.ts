@@ -1,4 +1,4 @@
-import eventEmits from './events/event-emits';
+import emit from './events/emit';
 import { EventType } from './events/event-handler';
 import { ContextMessage } from '../context_message/messages';
 
@@ -49,11 +49,11 @@ const getActionsStatusMessageDom = () =>
   });
 
 const emitEventByActionStatusMessage = async (actionsStatusMessage: string) => {
-  await eventEmits(actionsStatusMessageToStatus(actionsStatusMessage));
+  await emit(actionsStatusMessageToStatus(actionsStatusMessage));
 };
 
 const main = async () => {
-  await eventEmits('init');
+  await emit('init');
 
   const actionsStatusMessageDom = await getActionsStatusMessageDom();
 
@@ -103,6 +103,6 @@ observeGithub();
 
 chrome.runtime.onMessage.addListener((request: ContextMessage) => {
   if (request.eventName === 'DISABLE_REVIEW_GUARD_EVENT') {
-    eventEmits('disable_review_guard');
+    emit('disable_review_guard');
   }
 });
