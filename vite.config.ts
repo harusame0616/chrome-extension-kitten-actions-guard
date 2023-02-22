@@ -5,8 +5,8 @@ import { crx, defineManifest } from '@crxjs/vite-plugin';
 
 const manifest = defineManifest({
   manifest_version: 3,
-  name: 'GitHub Actions Progress View Sidebar',
-  description: '',
+  name: 'Kitten Actions Guard',
+  description: 'GitHub で Actions が完了するまでレビュー依頼できないようにする',
   version: '1.0',
   icons: {
     '16': 'assets/icons/16x16.png',
