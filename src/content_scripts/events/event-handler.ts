@@ -7,6 +7,7 @@ export const events = [
   'fail',
   'init',
   'unknown',
+  'disable_review_guard',
 ] as const;
 
 export type EventType = typeof events[number];
@@ -28,6 +29,9 @@ export default async (event: EventType) => {
       case 'init':
         await ActionsStatusDisplay.initialize();
         await ReviwersDisplay.initialize();
+        break;
+      case 'disable_review_guard':
+        ReviwersDisplay.enable();
         break;
       default:
         throw new Error('unknown event');
