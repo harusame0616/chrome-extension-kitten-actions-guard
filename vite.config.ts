@@ -23,7 +23,7 @@ const manifest = defineManifest({
   action: {
     default_title: 'disable review guard',
   },
-  permissions: ['activeTab', 'scripting'],
+  permissions: ['activeTab'],
   background: {
     service_worker: 'src/background/main.ts',
   },
