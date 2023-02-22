@@ -39,9 +39,9 @@ export default class ActionsStatusDisplay {
 
   static changeStatus(status: string) {
     const colorMap: { [key: string]: string } = {
-      pass: 'green',
-      processing: 'yellow',
-      fail: 'red',
+      passed: '#238636',
+      processing: '#d29922',
+      fail: '#f85149',
     };
     const color = colorMap[status] ?? 'white';
 
