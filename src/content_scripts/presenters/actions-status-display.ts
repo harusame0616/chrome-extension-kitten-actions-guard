@@ -16,7 +16,10 @@ export default class ActionsStatusDisplay {
     );
     this.actionStatusDom.appendChild(this.labelDom);
     this.actionStatusDom.appendChild(this.statusDom);
+
     this.labelDom.innerHTML = 'Actions status';
+    this.labelDom.style.paddingTop = '4px';
+    this.labelDom.classList.add('text-bold', 'discussion-sidebar-heading');
     this.statusDom.innerHTML = '-';
 
     const reviewersDom = await new Promise<HTMLDivElement>((r) => {
@@ -39,9 +42,9 @@ export default class ActionsStatusDisplay {
 
   static changeStatus(status: string) {
     const colorMap: { [key: string]: string } = {
-      pass: 'green',
-      processing: 'yellow',
-      fail: 'red',
+      passed: '#238636',
+      processing: '#d29922',
+      fail: '#f85149',
     };
     const color = colorMap[status] ?? 'white';
 
