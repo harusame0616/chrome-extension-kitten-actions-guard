@@ -1,5 +1,6 @@
 import eventEmits from './events/event-emits';
 import { EventType } from './events/event-handler';
+import { ContextMessage } from '../context_message/messages';
 
 const actionsStatusTextList = [
   'Some checks were not successful',
@@ -99,3 +100,9 @@ const observeGithub = () => {
 // SPA のため URL が変更されても再読み込みされない事がある。
 // なので DOM の変更を監視して処理を実行する。
 observeGithub();
+
+chrome.runtime.onMessage.addListener((request: ContextMessage) => {
+  if (request.eventName === 'DISABLE_REVIEW_GUARD_EVENT') {
+    eventEmits('disable_review_guard');
+  }
+});

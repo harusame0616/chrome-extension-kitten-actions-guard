@@ -20,6 +20,13 @@ const manifest = defineManifest({
       matches: ['https://github.com/*'],
     },
   ],
+  action: {
+    default_title: 'disable review guard',
+  },
+  permissions: ['activeTab', 'scripting'],
+  background: {
+    service_worker: 'src/background/main.ts',
+  },
 });
 
 export default defineConfig({
