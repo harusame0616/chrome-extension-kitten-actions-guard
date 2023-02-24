@@ -2,16 +2,11 @@ const actionsStatusContainerClassName = 'kag-actions-status-container';
 const statusTextClassName = 'kag-status-text';
 
 export default class ActionsStatusDisplay {
-  static async initialize() {
-    let actionsStatusContainerDOM = document.querySelector<HTMLDivElement>(
-      `.${actionsStatusContainerClassName}`
-    );
-
-    if (actionsStatusContainerDOM) {
-      return;
-    }
-
-    actionsStatusContainerDOM = document.createElement('div');
+  private static createActionsStatusContainerDOM(
+    labelDOM: HTMLDivElement,
+    statusTextDOM: HTMLDivElement
+  ) {
+    const actionsStatusContainerDOM = document.createElement('div');
     actionsStatusContainerDOM.classList.add(
       actionsStatusContainerClassName,
       'discussion-sidebar-item',
@@ -20,17 +15,44 @@ export default class ActionsStatusDisplay {
       'position-relative'
     );
 
+    actionsStatusContainerDOM.appendChild(labelDOM);
+    actionsStatusContainerDOM.appendChild(statusTextDOM);
+
+    return actionsStatusContainerDOM;
+  }
+
+  private static createLabelDOM() {
     const labelDOM = document.createElement('div');
     labelDOM.innerHTML = 'Actions status';
     labelDOM.style.paddingTop = '4px';
     labelDOM.classList.add('text-bold', 'discussion-sidebar-heading');
 
+    return labelDOM;
+  }
+
+  private static createStatusTextDOM() {
     const statusTextDOM = document.createElement('div');
     statusTextDOM.classList.add(statusTextClassName);
     statusTextDOM.innerHTML = '-';
 
-    actionsStatusContainerDOM.appendChild(labelDOM);
-    actionsStatusContainerDOM.appendChild(statusTextDOM);
+    return statusTextDOM;
+  }
+
+  private static isCreated() {
+    return !!document.querySelector<HTMLDivElement>(
+      `.${actionsStatusContainerClassName}`
+    );
+  }
+
+  static async initialize() {
+    if (this.isCreated()) {
+      return;
+    }
+
+    const actionsStatusContainerDOM = this.createActionsStatusContainerDOM(
+      this.createLabelDOM(),
+      this.createStatusTextDOM()
+    );
 
     const reviewersDom = await new Promise<HTMLDivElement>((r) => {
       const intervalId = setInterval(() => {
@@ -54,19 +76,24 @@ export default class ActionsStatusDisplay {
   }
 
   static changeStatus(status: string) {
-    const colorMap: { [key: string]: string } = {
-      passed: '#238636',
-      processing: '#d29922',
-      fail: '#f85149',
-    };
-    const color = colorMap[status] ?? 'white';
-
     const statusTextDOM = document.querySelector<HTMLDivElement>(
       `.${actionsStatusContainerClassName} .${statusTextClassName}`
     );
     if (!statusTextDOM) {
       throw new Error('Actions Status DOM is not found.');
     }
-    statusTextDOM.innerHTML = `<span style="color:${color}">${status}</span>`;
+
+    statusTextDOM.innerHTML = `<span style="color:${this.toColor(
+      status
+    )}">${status}</span>`;
+  }
+
+  static toColor(status: string) {
+    const colorMap: { [key: string]: string } = {
+      passed: '#238636',
+      processing: '#d29922',
+      fail: '#f85149',
+    };
+    return colorMap[status] ?? 'white';
   }
 }
