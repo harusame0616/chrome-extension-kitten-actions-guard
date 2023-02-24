@@ -1,3 +1,6 @@
+const actionsStatusContainerClassName = 'kag-actions-status-container';
+const statusTextClassName = 'kag-status-text';
+
 export default class ActionsStatusDisplay {
   static actionStatusDom = document.createElement('div');
 
@@ -8,7 +11,16 @@ export default class ActionsStatusDisplay {
   static actionStatusSrcDom: HTMLDivElement | null = null;
 
   static async initialize() {
+    const actionStatusDom = document.querySelector<HTMLDivElement>(
+      `.${actionsStatusContainerClassName}`
+    );
+
+    if (actionStatusDom) {
+      this.actionStatusDom = actionStatusDom;
+      return;
+    }
     this.actionStatusDom.classList.add(
+      actionsStatusContainerClassName,
       'discussion-sidebar-item',
       'sidebar-actions-status',
       'js-discussion-sidebar-item',
@@ -16,6 +28,7 @@ export default class ActionsStatusDisplay {
     );
     this.actionStatusDom.appendChild(this.labelDom);
     this.actionStatusDom.appendChild(this.statusDom);
+    this.statusDom.classList.add(statusTextClassName);
 
     this.labelDom.innerHTML = 'Actions status';
     this.labelDom.style.paddingTop = '4px';
@@ -48,6 +61,12 @@ export default class ActionsStatusDisplay {
     };
     const color = colorMap[status] ?? 'white';
 
-    this.statusDom.innerHTML = `<span style="color:${color}">${status}</span>`;
+    const statusDom = document.querySelector<HTMLDivElement>(
+      `.${actionsStatusContainerClassName} .${statusTextClassName}`
+    );
+    if (!statusDom) {
+      throw new Error('Actions Status DOM is not found.');
+    }
+    statusDom.innerHTML = `<span style="color:${color}">${status}</span>`;
   }
 }
