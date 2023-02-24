@@ -1,26 +1,36 @@
+const actionsStatusContainerClassName = 'kag-actions-status-container';
+const statusTextClassName = 'kag-status-text';
+
 export default class ActionsStatusDisplay {
-  static actionStatusDom = document.createElement('div');
-
-  static labelDom = document.createElement('div');
-
-  static statusDom = document.createElement('div');
-
-  static actionStatusSrcDom: HTMLDivElement | null = null;
-
   static async initialize() {
-    this.actionStatusDom.classList.add(
+    let actionsStatusContainerDOM = document.querySelector<HTMLDivElement>(
+      `.${actionsStatusContainerClassName}`
+    );
+
+    if (actionsStatusContainerDOM) {
+      return;
+    }
+
+    actionsStatusContainerDOM = document.createElement('div');
+    actionsStatusContainerDOM.classList.add(
+      actionsStatusContainerClassName,
       'discussion-sidebar-item',
       'sidebar-actions-status',
       'js-discussion-sidebar-item',
       'position-relative'
     );
-    this.actionStatusDom.appendChild(this.labelDom);
-    this.actionStatusDom.appendChild(this.statusDom);
 
-    this.labelDom.innerHTML = 'Actions status';
-    this.labelDom.style.paddingTop = '4px';
-    this.labelDom.classList.add('text-bold', 'discussion-sidebar-heading');
-    this.statusDom.innerHTML = '-';
+    const labelDOM = document.createElement('div');
+    labelDOM.innerHTML = 'Actions status';
+    labelDOM.style.paddingTop = '4px';
+    labelDOM.classList.add('text-bold', 'discussion-sidebar-heading');
+
+    const statusTextDOM = document.createElement('div');
+    statusTextDOM.classList.add(statusTextClassName);
+    statusTextDOM.innerHTML = '-';
+
+    actionsStatusContainerDOM.appendChild(labelDOM);
+    actionsStatusContainerDOM.appendChild(statusTextDOM);
 
     const reviewersDom = await new Promise<HTMLDivElement>((r) => {
       const intervalId = setInterval(() => {
@@ -30,14 +40,17 @@ export default class ActionsStatusDisplay {
         }
         r(dom);
         clearInterval(intervalId);
-      }, 200);
+      }, 100);
     });
 
     if (!reviewersDom.parentElement) {
       throw new Error('not found reviewers dom');
     }
 
-    reviewersDom.parentElement.insertBefore(this.actionStatusDom, reviewersDom);
+    reviewersDom.parentElement.insertBefore(
+      actionsStatusContainerDOM,
+      reviewersDom
+    );
   }
 
   static changeStatus(status: string) {
@@ -48,6 +61,12 @@ export default class ActionsStatusDisplay {
     };
     const color = colorMap[status] ?? 'white';
 
-    this.statusDom.innerHTML = `<span style="color:${color}">${status}</span>`;
+    const statusTextDOM = document.querySelector<HTMLDivElement>(
+      `.${actionsStatusContainerClassName} .${statusTextClassName}`
+    );
+    if (!statusTextDOM) {
+      throw new Error('Actions Status DOM is not found.');
+    }
+    statusTextDOM.innerHTML = `<span style="color:${color}">${status}</span>`;
   }
 }
