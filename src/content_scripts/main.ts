@@ -4,10 +4,12 @@ import { ContextMessage } from '../context_message/messages';
 
 const successMessage = 'All checks have passed';
 const failureMessage1 = 'Some checks were not successful';
+const failureMessage2 = 'All checks have failed';
 const inProgressMessage = 'Some checks haven’t completed yet';
 
 const actionsStatusTextList = [
   failureMessage1,
+  failureMessage2,
   inProgressMessage,
   successMessage,
 ] as const;
@@ -23,7 +25,8 @@ const actionsStatusMessageToStatus = (message: string) => {
   }
 
   const statusMap: { [key in ActionsStatusText]: EventType } = {
-    [failureMessage1]: 'fail',
+    [failureMessage1]: 'failed',
+    [failureMessage2]: 'failed',
     [inProgressMessage]: 'processing',
     [successMessage]: 'passed',
   };
@@ -86,12 +89,15 @@ chrome.runtime.onMessage.addListener((request: ContextMessage) => {
 
 const createWatchGithubActionsStatus = () => {
   let prevStatusMessage = '';
+  console.log('createwatch');
 
   return () => {
     const currentStatusMessage = getActionsStatusMessageDom();
+    console.log('watch', prevStatusMessage, currentStatusMessage);
     if (prevStatusMessage === currentStatusMessage || !currentStatusMessage) {
       return;
     }
+    console.log('emit');
     prevStatusMessage = currentStatusMessage;
     emitEventByActionStatusMessage(currentStatusMessage);
   };

@@ -4,7 +4,7 @@ import ReviwersDisplay from '../presenters/reviewers-display';
 export const events = [
   'processing',
   'passed',
-  'fail',
+  'failed',
   'init',
   'unknown',
   'disable_review_guard',
@@ -22,7 +22,7 @@ export default async (event: EventType) => {
         ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.enable();
         break;
-      case 'fail':
+      case 'failed':
         ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.disable();
         break;
