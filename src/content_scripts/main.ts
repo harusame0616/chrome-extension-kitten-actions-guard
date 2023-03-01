@@ -49,24 +49,25 @@ const emitEventByActionStatusMessage = async (actionsStatusMessage: string) => {
   await emit(actionsStatusMessageToStatus(actionsStatusMessage));
 };
 
-let lastInitUrl = '';
-const observeGithub = async () => {
-  const observer = new MutationObserver(async () => {
-    // 要素ごとの変更でコールバックされるため、
-    // 同一URLでは１回だけ実行されるように
-    if (lastInitUrl === window.location.href) {
-      return;
-    }
-    lastInitUrl = window.location.href;
+let timeoutId: number;
+const initialize = () => {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(async () => {
     await emit('init');
-  });
+  }, 1000);
+};
+
+const observeGithub = async () => {
+  const observer = new MutationObserver(initialize);
 
   observer.observe(document.body, {
     attributes: false,
     childList: true,
     subtree: true,
   });
-  await emit('init');
+  initialize();
 };
 
 // SPA のため URL が変更されても再読み込みされない事がある。
