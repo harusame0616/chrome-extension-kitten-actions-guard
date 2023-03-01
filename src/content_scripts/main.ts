@@ -56,12 +56,16 @@ const initialize = () => {
   }
   timeoutId = setTimeout(async () => {
     await emit('init');
-  }, 1000);
+  }, 2000);
 };
 
 const observeGithub = async () => {
-  const observer = new MutationObserver(initialize);
-
+  const observer = new MutationObserver(() => {
+    if (/^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href)) {
+      return;
+    }
+    initialize();
+  });
   observer.observe(document.body, {
     attributes: false,
     childList: true,
@@ -94,4 +98,6 @@ const createWatchGithubActionsStatus = () => {
 };
 
 // Github Actions の ステータスを監視する
-setInterval(createWatchGithubActionsStatus(), 1000);
+const watchGithubActionsStatus = createWatchGithubActionsStatus();
+setInterval(watchGithubActionsStatus, 1000);
+watchGithubActionsStatus();
