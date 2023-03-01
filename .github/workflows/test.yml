@@ -1,0 +1,9 @@
+name: learn-github-actions
+on: [push]
+jobs:
+  sleep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep for 30 seconds
+        run: sleep 10s
+        shell: bash

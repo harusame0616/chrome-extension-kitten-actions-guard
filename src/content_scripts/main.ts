@@ -49,24 +49,29 @@ const emitEventByActionStatusMessage = async (actionsStatusMessage: string) => {
   await emit(actionsStatusMessageToStatus(actionsStatusMessage));
 };
 
-let lastInitUrl = '';
+let timeoutId: number;
+const initialize = () => {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(async () => {
+    await emit('init');
+  }, 2000);
+};
+
 const observeGithub = async () => {
-  const observer = new MutationObserver(async () => {
-    // 要素ごとの変更でコールバックされるため、
-    // 同一URLでは１回だけ実行されるように
-    if (lastInitUrl === window.location.href) {
+  const observer = new MutationObserver(() => {
+    if (/^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href)) {
       return;
     }
-    lastInitUrl = window.location.href;
-    await emit('init');
+    initialize();
   });
-
   observer.observe(document.body, {
     attributes: false,
     childList: true,
     subtree: true,
   });
-  await emit('init');
+  initialize();
 };
 
 // SPA のため URL が変更されても再読み込みされない事がある。
@@ -93,4 +98,6 @@ const createWatchGithubActionsStatus = () => {
 };
 
 // Github Actions の ステータスを監視する
-setInterval(createWatchGithubActionsStatus(), 1000);
+const watchGithubActionsStatus = createWatchGithubActionsStatus();
+setInterval(watchGithubActionsStatus, 1000);
+watchGithubActionsStatus();
