@@ -92,7 +92,7 @@ export default class ActionsStatusDisplay {
     const colorMap: { [key: string]: string } = {
       passed: '#238636',
       processing: '#d29922',
-      fail: '#f85149',
+      failed: '#f85149',
     };
     return colorMap[status] ?? 'white';
   }
