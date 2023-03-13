@@ -15,26 +15,22 @@ export default async (event: EventType) => {
   try {
     switch (event) {
       case 'processing':
-        ActionsStatusDisplay.changeStatus(event);
+        await ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.disable();
         break;
       case 'passed':
-        ActionsStatusDisplay.changeStatus(event);
+        await ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.enable();
         break;
       case 'failed':
-        ActionsStatusDisplay.changeStatus(event);
+        await ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.disable();
-        break;
-      case 'init':
-        await ActionsStatusDisplay.initialize();
-        await ReviwersDisplay.initialize();
         break;
       case 'disable_review_guard':
         ReviwersDisplay.enable();
         break;
       default:
-        throw new Error('unknown event');
+        break;
     }
   } catch (e) {
     console.error(e);

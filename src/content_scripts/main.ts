@@ -48,58 +48,22 @@ const getActionsStatusMessageDom = () => {
   return actionsStatusDom?.innerText;
 };
 
-const emitEventByActionStatusMessage = async (actionsStatusMessage: string) => {
-  await emit(actionsStatusMessageToStatus(actionsStatusMessage));
-};
-
-const createWatchGithubActionsStatus = () => {
-  let prevStatusMessage = '';
-
-  return () => {
-    const currentStatusMessage = getActionsStatusMessageDom();
-    if (prevStatusMessage === currentStatusMessage || !currentStatusMessage) {
-      return;
-    }
-    prevStatusMessage = currentStatusMessage;
-    emitEventByActionStatusMessage(currentStatusMessage);
-  };
-};
-
-let timeoutId: number;
-const initialize = () => {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-  timeoutId = setTimeout(async () => {
-    await emit('init');
-    // Github Actions の ステータスを監視する
-    const watchGithubActionsStatus = createWatchGithubActionsStatus();
-    setInterval(watchGithubActionsStatus, 1000);
-    watchGithubActionsStatus();
-  }, 3000);
-};
-
 chrome.runtime.onMessage.addListener((request: ContextMessage) => {
   if (request.eventName === 'DISABLE_REVIEW_GUARD_EVENT') {
     emit('disable_review_guard');
   }
 });
 
-const observeGithub = async () => {
-  const observer = new MutationObserver(() => {
-    if (/^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href)) {
-      return;
-    }
-    initialize();
-  });
-  observer.observe(document.body, {
-    attributes: false,
-    childList: true,
-    subtree: true,
-  });
-  initialize();
-};
+const isCheckPage = () =>
+  /^https:\/\/github.com\/.*\/pull\/[0-9]+$/.test(window.location.href);
 
-// SPA のため URL が変更されても再読み込みされない事がある。
-// なので DOM の変更を監視して処理を実行する。
-observeGithub();
+setInterval(() => {
+  if (!isCheckPage()) {
+    return;
+  }
+
+  const actionsStatusMessage = getActionsStatusMessageDom() ?? '';
+  const status = actionsStatusMessageToStatus(actionsStatusMessage);
+
+  emit(status);
+}, 2000);

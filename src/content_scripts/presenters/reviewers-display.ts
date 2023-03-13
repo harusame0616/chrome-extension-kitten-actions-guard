@@ -1,38 +1,29 @@
 export default class ReviwersDisplay {
-  static reviewersDom: HTMLDivElement | null;
-
-  static async initialize() {
-    this.reviewersDom = await new Promise<HTMLDivElement>((r) => {
-      const intervalId = setInterval(() => {
-        const dom = document.querySelector<HTMLDivElement>('.sidebar-assignee');
-        if (!dom) {
-          return;
-        }
-        r(dom);
-        clearInterval(intervalId);
-      }, 200);
-    });
-
-    this.enable();
+  static getReviewersDom() {
+    const dom = document.querySelector<HTMLDivElement>('.sidebar-assignee');
+    if (!dom) {
+      throw new Error('reviewers is not found');
+    }
+    return dom;
   }
 
-  static disable(): void {
-    if (!this.reviewersDom) {
-      throw new Error('DOM is not found');
+  static disable() {
+    const reviewersDom = this.getReviewersDom();
+    if (!reviewersDom) {
+      return;
     }
 
-    this.reviewersDom.style.cursor = 'not-allowed';
-    (this.reviewersDom.children[0] as HTMLFormElement).style.pointerEvents =
-      'none';
+    reviewersDom.style.cursor = 'not-allowed';
+    (reviewersDom.children[0] as HTMLFormElement).style.pointerEvents = 'none';
   }
 
-  static enable(): void {
-    if (!this.reviewersDom) {
-      throw new Error('DOM is not found');
+  static enable() {
+    const reviewersDom = this.getReviewersDom();
+    if (!reviewersDom) {
+      return;
     }
 
-    this.reviewersDom.style.cursor = 'auto';
-    (this.reviewersDom.children[0] as HTMLFormElement).style.pointerEvents =
-      'auto';
+    reviewersDom.style.cursor = 'auto';
+    (reviewersDom.children[0] as HTMLFormElement).style.pointerEvents = 'auto';
   }
 }

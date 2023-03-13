@@ -75,7 +75,8 @@ export default class ActionsStatusDisplay {
     );
   }
 
-  static changeStatus(status: string) {
+  static async changeStatus(status: string) {
+    await this.initialize();
     const statusTextDOM = document.querySelector<HTMLDivElement>(
       `.${actionsStatusContainerClassName} .${statusTextClassName}`
     );
