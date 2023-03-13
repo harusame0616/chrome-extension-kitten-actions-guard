@@ -10,6 +10,7 @@ export const events = [
   'disable_review_guard',
 ] as const;
 
+let isReviewersGuardDisabled = false;
 export type EventType = typeof events[number];
 export default async (event: EventType) => {
   try {
@@ -23,11 +24,15 @@ export default async (event: EventType) => {
         ReviwersDisplay.enable();
         break;
       case 'failed':
+        if (isReviewersGuardDisabled) {
+          return;
+        }
         await ActionsStatusDisplay.changeStatus(event);
         ReviwersDisplay.disable();
         break;
       case 'disable_review_guard':
         ReviwersDisplay.enable();
+        isReviewersGuardDisabled = !isReviewersGuardDisabled;
         break;
       default:
         break;
