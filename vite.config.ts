@@ -7,7 +7,7 @@ const manifest = defineManifest({
   manifest_version: 3,
   name: 'Kitten Actions Guard',
   description: 'GitHub で Actions が完了するまでレビュー依頼できないようにする',
-  version: '1.0.2',
+  version: '1.0.3',
   icons: {
     '16': 'assets/icons/16x16.png',
     '32': 'assets/icons/32x32.png',
